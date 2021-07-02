@@ -11,8 +11,9 @@ io.on("connection", socket => {
     console.log(socket.id);
 
     socket.on('messageChat', data => {
-        console.log(JSON.parse(data));
-        io.emit('messageChat', JSON.stringify({text: 'Hola Mundo desde el Servidor!'}))
+        const messageChat = JSON.parse(data);
+        //....
+        io.emit('messageChat', JSON.stringify(messageChat))
     })
 
     socket.on("disconnect", () => {
