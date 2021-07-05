@@ -8,26 +8,30 @@ const http = require('http').Server(app);
 const io = require('socket.io')(http);
 
 let users = [];
+let messagesChat = [];
 
 io.on("connection", socket => {
-    
+
     socket.on('start', data => {
         let user = {};
         user.id = socket.id;
         user.name = (JSON.parse(data)).name;
+        user.avatar = (JSON.parse(data)).avatar;
         users.push(user);
+        console.log(users);
         let responseData = {
             label: 'start',
-            users
+            users,
+            messagesChat
         }
-        io.emit('start', JSON.stringify(responseData));
+        io.to(socket.id).emit('start', JSON.stringify(responseData));
     })
 
     socket.on('messageChat', data => {
-        const messageChat = JSON.parse(data);
+        messagesChat.push(JSON.parse(data));
         let responseData = {
             label: 'messageChat',
-            message: data
+            message: (JSON.parse(data))
         }
         io.emit('messageChat', JSON.stringify(responseData))
     })
