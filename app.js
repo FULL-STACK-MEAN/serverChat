@@ -21,10 +21,11 @@ io.on("connection", socket => {
         console.log(users);
         let responseData = {
             label: 'start',
-            users,
+            userId: user.id,
+            userNameIn: user.name,
             messagesChat
         }
-        io.to(socket.id).emit('start', JSON.stringify(responseData));
+        io.emit('start', JSON.stringify(responseData)); // to(socket.id) devuelve solo a quien envía el mensaje
     })
 
     socket.on('messageChat', data => {
@@ -37,17 +38,19 @@ io.on("connection", socket => {
     })
 
     socket.on("disconnect", () => {
-        let userName;
+        let userNameOut;
         users.forEach((elem, i) => {
             if(elem.id === socket.id) {
-                userName = elem.name;
+                userNameOut = elem.name;
                 users.splice(i, 1);
             }
         })
+        if(users.length === 0) {
+            messagesChat = [];
+        }
         let responseData = {
             label: 'end',
-            users,
-            userName
+            userNameOut
         }
         io.emit('end', JSON.stringify(responseData))
     })
